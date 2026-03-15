@@ -77,6 +77,14 @@ func goInnerType(req *plugin.GenerateRequest, options *opts.Options, col *plugin
 			continue
 		}
 		if override.MatchesColumn(col) {
+			// Apply emit_pointers_for_null_types logic to overrides
+			notNull := col.NotNull || col.IsArray
+			if !notNull && options.EmitPointersForNullTypes {
+				// Check if the override type already has a pointer
+				if !strings.HasPrefix(oride.GoType.TypeName, "*") {
+					return "*" + oride.GoType.TypeName
+				}
+			}
 			return oride.GoType.TypeName
 		}
 	}

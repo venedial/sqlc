@@ -80,6 +80,13 @@ func (o *Override) Matches(n *plugin.Identifier, defaultSchema string) bool {
 func (o *Override) MatchesColumn(col *plugin.Column) bool {
 	columnType := sdk.DataType(col.Type)
 	notNull := col.NotNull || col.IsArray
+	
+	// For db_type overrides without explicit nullable setting, match all columns of that type
+	if o.DBType != "" && o.Column == "" {
+		return o.DBType == columnType && o.Unsigned == col.Unsigned
+	}
+	
+	// For column-specific or nullable-specific overrides, use exact matching
 	return o.DBType != "" && o.DBType == columnType && o.Nullable != notNull && o.Unsigned == col.Unsigned
 }
 
