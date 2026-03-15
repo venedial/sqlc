@@ -44,8 +44,19 @@ func buildEnums(req *plugin.GenerateRequest, options *opts.Options) []Enum {
 				if _, found := seen[value]; found || value == "" {
 					value = fmt.Sprintf("value_%d", i)
 				}
+				
+				// Apply name normalization if enabled
+				var constantName string
+				if options.EmitEnumNameNormalize {
+					normalizedValue := NormalizeEnumName(value)
+					constantName = StructName(enumName, options) + normalizedValue
+				} else {
+					// Default behavior
+					constantName = StructName(enumName+"_"+value, options)
+				}
+				
 				e.Constants = append(e.Constants, Constant{
-					Name:  StructName(enumName+"_"+value, options),
+					Name:  constantName,
 					Value: v,
 					Type:  e.Name,
 				})

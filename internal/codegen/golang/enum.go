@@ -62,3 +62,8 @@ func titleFirst(s string) string {
 
 	return string(r)
 }
+
+// NormalizeEnumName converts enum values to PascalCase (e.g., "ACTIVE" -> "Active")
+func NormalizeEnumName(value string) string {
+	return SetCaseStyle(strings.ToLower(EnumReplace(value)), "pascal")
+}
